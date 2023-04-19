@@ -1,13 +1,41 @@
 import axios from 'axios'
 
-let client = axios.create()
+let listeners = {
+  onBegin: null,
+  onComplete: null,
+  interceptorRequest(config) {
+    if (listeners.onBegin) listeners.onBegin()
+    return config
+  },
+  interceptorResponseSucc(response) {
+    if (listeners.onComplete) listeners.onComplete(true)
+    return response
+  },
+  interceptorResponseFail(error) {
+    if (listeners.onComplete) listeners.onComplete(false)
+    return Promise.reject(error)
+  },
+  addToAxios(client) {
+    client.interceptors.request.use(listeners.interceptorRequest)
+    client.interceptors.response.use(listeners.interceptorResponseSucc, listeners.interceptorResponseFail)
+  }
+}
 
-function init(sid) {
+function setListeners({ onBegin, onComplete }) {
+  listeners.onBegin = typeof onBegin === 'function' ? onBegin : null
+  listeners.onComplete = typeof onComplete === 'function' ? onComplete : null
+}
+
+let client = axios.create()
+listeners.addToAxios(client)
+
+function setSid(sid) {
   client = axios.create({
     headers: {
       'x-sid': sid
     }
   })
+  listeners.addToAxios(client)
 }
 
 async function sheetList(adminPwd) {
@@ -110,7 +138,8 @@ async function logRemove(log) {
 }
 
 export default {
-  init,
+  setListeners,
+  setSid,
 
   // admin
   sheetList,

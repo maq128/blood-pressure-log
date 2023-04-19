@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { showDialog, Tabbar, TabbarItem } from 'vant'
+import { Loading, Overlay, showDialog, Tabbar, TabbarItem } from 'vant'
 import Home from '@/components/Home.vue'
 import Sheet from '@/components/Sheet.vue'
 import $api from '@/libs/api'
@@ -9,6 +9,21 @@ const admin = ref(false)
 const sheet = ref(null)
 const curPage = ref(0)
 const readonly = ref(false)
+const loading = ref(false)
+
+// 向服务器发送请求时，若短时间内未完成响应则显示遮罩提示
+let loadingTimerId
+$api.setListeners({
+  onBegin() {
+    loadingTimerId = setTimeout(() => {
+      loading.value = true
+    }, 1000)
+  },
+  onComplete(succ) {
+    clearTimeout(loadingTimerId)
+    loading.value = false
+  }
+})
 
 if (window.location.pathname.startsWith('/admin')) {
   admin.value = true
@@ -25,7 +40,7 @@ if (k && v) {
       curPage.value = 1
       if (k === 'sid') {
         document.title = `${sheet.value.name} - 血压记`
-        $api.init(v)
+        $api.setSid(v)
       } else {
         document.title = `${sheet.value.name}:只读 - 血压记`
         readonly.value = true
@@ -50,10 +65,19 @@ if (k && v) {
   </Tabbar>
   <Home v-if="curPage == 0" :admin="admin" :sheet="sheet" />
   <Sheet v-if="curPage == 1" :content="sheet.content" :readonly="readonly" />
+  <div class="bottom-padding" />
+
+  <Overlay :show="loading" :duration="0">
+    <Loading class="loading">正在请求服务器 ...</Loading>
+  </Overlay>
 </template>
 
-<style>
-.page {
-  padding-bottom: 5em;
+<style scoped>
+.bottom-padding {
+  height: 5em;
+}
+.loading {
+  text-align: center;
+  line-height: 80vh;
 }
 </style>

@@ -1,14 +1,23 @@
 # 项目说明
 
 血压记录，用 Vue3 + Vite 实现，目标部署平台是 replit.com。
-如果在非 Replit 环境部署，则数据库存储退化为 .json 文件存储。
+如果在非 Replit 环境运行，则数据库存储退化为 `.json` 文件存储。
 
-Vite 除了对前端代码进行打包之外，还可以启动一个 server，本意是开发调试时作为后端反向代理来使用，
+Vite 除了对前端代码进行打包之外，还启动了一个 server，本意是开发调试时作为后端反向代理来使用，
 本项目直接用这个 server 来运行后端代码。
 
-# TODOs
+# 开发和运行
 
-- 使用 Service Worker 进行前端缓存
+replit.com 线上打包运行：
+```sh
+# 打包（等效于 npm run build）
+vite build
+# 启动运行（等效于 npm run dev）
+vite
+```
+
+本地开发调试也是同样使用 `npm run dev` 命令，而由于 `backend/index.js` 中的区别处理，浏览器拿到的并不是打包的版本，
+而是 Vite 实时生成的调试版本，同时作为前端缓存的 Service Worker 也是不起作用的。
 
 # 参考资料
 
