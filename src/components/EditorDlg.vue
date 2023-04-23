@@ -33,7 +33,7 @@ function openAdd() {
   }
   show.value = true
   mode.value = 'add'
-  title.value = '添加新记录 ' + dayjs(log.value.ts).format('HH:MM')
+  title.value = '添加新记录 ' + dayjs(log.value.ts).format('HH:mm')
 
   // 设置输入焦点，这里使用 nextTick() 不管用
   setTimeout(() => {
@@ -45,7 +45,7 @@ function openEdit(v) {
   log.value = { ...v }
   show.value = true
   mode.value = 'edit'
-  title.value = dayjs(log.value.ts).format('YYYY/MM/DD HH:MM')
+  title.value = dayjs(log.value.ts).format('YYYY/MM/DD HH:mm')
 
   // 设置输入焦点，这里使用 nextTick() 不管用
   setTimeout(() => {

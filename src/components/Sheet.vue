@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import $api from '@/libs/api'
 import { Button, Tab, Tabs } from 'vant'
-import LogCard from './LogCard.vue'
+import LogList from './LogList.vue'
 import EditorDlg from './EditorDlg.vue'
 import Movable from './Movable.vue'
 
@@ -57,37 +57,13 @@ onMounted(async () => {
 function switchMonth(idx) {
   let tab = tabs.value[idx]
 
-  // 生成显示用的数据列表
-  let now = new Date()
-  let sameMonth = tab.y == now.getFullYear() && tab.m == now.getMonth()
-  list.value = []
-  for (let idx of Array(new Date(tab.y, tab.m + 1, 0).getDate()).keys()) {
-    let date = idx + 1
-    let isToday = sameMonth && date == now.getDate()
-    let isTodayForenoon = isToday && now.getHours() < 12
-    let isTodayAfternoon = isToday && now.getHours() >= 12
-    list.value.push({
-      date,
-      forenoon: [],
-      afternoon: [],
-      isTodayForenoon,
-      isTodayAfternoon,
-    })
-  }
-
   // 过滤出当月的所有记录
-  let logs = content.filter(log => {
+  list.value = content.filter(log => {
     let t = new Date(log.ts)
     let y = t.getFullYear()
     let m = t.getMonth()
     return tab.y == y && tab.m == m
   }).sort((a, b) => a.ts - b.ts) // 正序
-
-  for (let log of logs) {
-    let d = new Date(log.ts)
-    let item = list.value[d.getDate() - 1]
-    item[d.getHours() < 12 ? 'forenoon' : 'afternoon'].push(log)
-  }
 }
 
 // 编辑对话框
@@ -118,38 +94,7 @@ function onEditorDlgRemove(log) {
       <Tab v-for="tab in tabs" :title="tab.title"></Tab>
     </Tabs>
 
-    <table class="list">
-      <thead>
-        <tr>
-          <th></th>
-          <th>午前</th>
-          <th>午后</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="item in list">
-          <th class="c1">{{ item.date }}</th>
-          <td class="c2" :class="{ 'is-now': item.isTodayForenoon }">
-            <LogCard
-              v-for="log in item.forenoon"
-              :key="log.ts"
-              class="log-card"
-              :log="log"
-              @click="editorDlg.openEdit(log)"
-            />
-          </td>
-          <td class="c3" :class="{ 'is-now': item.isTodayAfternoon }">
-            <LogCard
-              v-for="log in item.afternoon"
-              :key="log.ts"
-              class="log-card"
-              :log="log"
-              @click="editorDlg.openEdit(log)"
-            />
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <LogList :list="list" @click="log => editorDlg.openEdit(log)" />
   </div>
 
   <EditorDlg
@@ -175,32 +120,6 @@ function onEditorDlgRemove(log) {
 </template>
 
 <style scoped>
-table.list {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: small;
-}
-table.list th {
-  border: 1px solid silver;
-  background-color: #eee;
-}
-table.list td {
-  border: 1px solid silver;
-}
-.c1 {
-  width: 8%;
-  text-align: center;
-}
-.c2, .c3 {
-  width: 41%;
-  vertical-align: top;
-}
-.is-now {
-  background-color: #fdd;
-}
-.log-card {
-  margin: 0.1em 0 0.1em 0.3em;
-}
 :deep(.van-tabs--line .van-tabs__wrap) {
   height: 1.8em;
 }
