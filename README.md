@@ -15,9 +15,24 @@ vite build
 # 启动运行（等效于 npm run dev）
 vite
 ```
+运行时应设置环境变量 `ADMIN_PWD` 和 `RUN_DIST`。
 
-本地开发调试也是同样使用 `npm run dev` 命令，而由于 `backend/index.js` 中的区别处理，浏览器拿到的并不是打包的版本，
-而是 Vite 实时生成的调试版本，同时作为前端缓存的 Service Worker 也是不起作用的。
+本地开发调试也是同样使用 `npm run dev` 命令，而在没有设置 `RUN_DIST` 环境变量的情况下，由于 `backend/index.js` 中的区别处理，
+浏览器拿到的并不是打包的版本，而是 Vite 实时生成的调试版本，同时作为前端缓存的 Service Worker 也是不起作用的。
+
+# 在 docker 容器中运行
+
+```sh
+# 构建 docker image
+docker build --tag bpl .
+
+# docker image 的备份和恢复
+docker save bpl:latest | gzip > bpl.tar.gz
+docker load < bpl.tar.gz
+
+# 通过 docker-compose 启动 docker 容器
+docker-compose up -d
+```
 
 # 参考资料
 

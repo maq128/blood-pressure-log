@@ -27,8 +27,8 @@ export default {
     server.middlewares
       .use('/api', api)
 
-    // 如果是 replit 线上环境运行，则启用打包的版本（含 PWA）
-    if (process.env['REPL_ID']) {
+    // 根据环境变量设置启用打包的版本（含 PWA）
+    if (process.env['RUN_DIST']) {
       server.middlewares
         .use('/sid', index)
         .use('/admin', index)

@@ -1,0 +1,22 @@
+version: "3.6"
+
+services:
+  bpl:
+    image: bpl
+    container_name: bpl
+    restart: unless-stopped
+    networks:
+      - main-network
+    volumes:
+      - app:/app
+    environment:
+      - ADMIN_PWD=a
+      - RUN_DIST=true
+
+volumes:
+  app:
+
+networks:
+  main-network:
+    name: main-network
+    external: true

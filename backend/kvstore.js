@@ -26,7 +26,7 @@ if (process.env['REPL_ID']) {
         return JSON.parse(buffer.toString())
       })
       .catch(() => {
-        data = {}
+        return {}
       })
   }
 
