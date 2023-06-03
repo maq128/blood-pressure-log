@@ -74,7 +74,7 @@ if (k && v) {
 
 <style scoped>
 .bottom-padding {
-  height: 5em;
+  height: 8em;
 }
 .loading {
   text-align: center;

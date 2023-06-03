@@ -105,11 +105,7 @@ function onEditorDlgRemove(log) {
     @remove="onEditorDlgRemove"
   />
 
-  <Movable
-    v-if="!readonly"
-    :right="5"
-    :bottom="100"
-  >
+  <Movable v-if="!readonly">
     <Button
       type="primary"
       icon="plus"

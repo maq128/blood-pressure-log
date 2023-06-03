@@ -4,11 +4,11 @@ import { ref, onMounted } from 'vue'
 const props = defineProps({
   right: {
     type: Number,
-    default: 10
+    default: -1
   },
   bottom: {
     type: Number,
-    default: 100
+    default: -1
   },
 })
 
@@ -28,8 +28,15 @@ let startRight = props.right
 let startBottom = props.bottom
 
 onMounted(() => {
-  movableDiv.value.style.right = `${divRight}px`
-  movableDiv.value.style.bottom = `${divBottom}px`
+  // 获取组件的实际尺寸
+  let rect = movableDiv.value.getBoundingClientRect()
+  divWidth = rect.width
+  divHeight = rect.height
+
+  // 缺省的初始位置设在底部中间
+  if (divRight < 0) divRight = (window.innerWidth - divWidth) / 2
+  if (divBottom < 0) divBottom = 50
+  setPos()
 })
 
 function onPointerDown(evt) {
@@ -59,9 +66,6 @@ function onPointerMove(evt) {
         if (dx > DRAG_THRESHOLD || dx < -DRAG_THRESHOLD || dy > DRAG_THRESHOLD || dy < -DRAG_THRESHOLD) {
           step = 2
           movableDiv.value.setPointerCapture(evt.pointerId)
-          let rect = movableDiv.value.getBoundingClientRect()
-          divWidth = rect.width
-          divHeight = rect.height
           moveBy(evt)
         }
       }
@@ -89,12 +93,7 @@ function onPointerCancel(evt) {
   movableDiv.value.releasePointerCapture(evt.pointerId)
 }
 
-function moveBy(evt) {
-  let dx = evt.pageX - startX
-  let dy = evt.pageY - startY
-  divRight = startRight - dx
-  divBottom = startBottom - dy
-
+function setPos() {
   if (divRight < 0) divRight = 0
   if (divBottom < 50) divBottom = 50
 
@@ -107,6 +106,15 @@ function moveBy(evt) {
 
   movableDiv.value.style.right = `${divRight}px`
   movableDiv.value.style.bottom = `${divBottom}px`
+}
+
+function moveBy(evt) {
+  let dx = evt.pageX - startX
+  let dy = evt.pageY - startY
+  divRight = startRight - dx
+  divBottom = startBottom - dy
+
+  setPos()
 }
 </script>
 
