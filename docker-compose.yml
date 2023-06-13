@@ -8,13 +8,13 @@ services:
     networks:
       - main-network
     volumes:
-      - app:/app
+      - data:/app/data
     environment:
       - ADMIN_PWD=a
       - RUN_DIST=true
 
 volumes:
-  app:
+  data:
 
 networks:
   main-network:

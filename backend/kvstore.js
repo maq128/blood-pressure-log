@@ -19,7 +19,7 @@ if (process.env['REPL_ID']) {
   db.sid2roid = sid2roid
 } else {
   // 在其它开发环境
-  let filename = './mock-replit-database.json'
+  let filename = './data/mock-replit-database.json'
   async function loadDataFromDisk() {
     return await fs.promises.readFile(filename)
       .then(buffer => {
